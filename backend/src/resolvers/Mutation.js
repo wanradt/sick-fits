@@ -2,18 +2,42 @@ const mutations = {
   async createItem( parent, args, ctx, info ) {
     // TODO login
 
-  const data = {
-    data: {
+    const data = {
+      data: {
+        ...args.data
+      }
+    };
+
+    console.log(data);
+    console.log(info);
+
+    const item = await ctx.db.mutation.createItem( data, info );
+    return item;
+  },
+
+  async updateItem( parent, args, ctx, info ) {
+    // TODO login
+
+    // copy updates from data
+    const updates = {
       ...args.data
-    }
-  };
+    };
 
-  console.log(data);
-  console.log(info);
+    // remove id from updates
+    delete updates.id;
 
-  const item = await ctx.db.mutation.createItem( data, info );
-  return item;
+    console.log(updates);
+    console.log(info);
+
+    const item = await ctx.db.mutation.updateItem( {
+      data: updates,
+      where: {
+        id: args.data.id
+      }
+    }, info );
+    return item;
   }
 };
 
 module.exports = mutations;
+
