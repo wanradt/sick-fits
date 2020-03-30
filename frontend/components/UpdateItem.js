@@ -9,9 +9,11 @@ import Error from './ErrorMessage';
 
 const UPDATE_ITEM_MUTATION = gql`
   mutation UPDATE_ITEM_MUTATION( 
+    $id: ID! 
     $data: ItemUpdateInput! 
   ) {
-    updateItem( 
+    updateItem(
+      id: $id 
       data: $data 
     ) {
       id
@@ -50,29 +52,33 @@ class UpdateItem extends Component {
     this.setState( { [name]: value } );
   };
 
+  updateItem = async ( e, updateItemMutation ) => {
+    e.preventDefault();
+    console.log( 'updating...' );
+    console.log( this.state );
+    const variables = {
+      variables: {
+        id: this.props.id,
+        data: this.state,
+      }
+    };
+    console.log( variables );
+    const res = await updateItemMutation( variables );
+    console.log( 'updated...' );
+  }
+
   render() {
     return(
-      <Query query={ SINGLE_ITEM_QUERY }variables={ {
+      <Query query={ SINGLE_ITEM_QUERY } variables={ {
         id: this.props.id
       } } > 
         { ( { data, loading } ) => {
           if ( loading ) return <p>Loading...</p>;
-
+          if ( !data.item ) return <p>No item found for ID { this.props.id } </p>;
           return (
             <Mutation mutation={ UPDATE_ITEM_MUTATION } variables={ { data: this.state } }>
               { ( updateItem, { loading, error } ) => (
-                <Form onSubmit={ async e => {
-                  e.preventDefault();
-                  console.log( this.state );
-                  const res = await updateItem();
-                  console.log( res );
-                  Router.push( {
-                    pathname: '/item',
-                    query: {
-                      id: res.data.updateItem.id
-                    }
-                  } );
-                } } >
+                <Form onSubmit={ e => this.updateItem( e, updateItem ) }>
                   <Error error={ error } />
                 { data.item.image && <img width="200" src={data.item.image} alt="preview" /> }
                   <fieldset disabled={ loading } aria-busy={ loading } >
