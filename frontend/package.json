@@ -40,7 +40,7 @@
     "react-dom": "^16.13.1",
     "react-stripe-checkout": "^2.6.3",
     "react-transition-group": "^2.9.0",
-    "set-value": ">=2.0.1",
+    "set-value": ">=4.0.1",
     "styled-components": "^5.0.1",
     "waait": "^1.0.5"
   },
